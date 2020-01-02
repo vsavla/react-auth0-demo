@@ -1,41 +1,31 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
-class Profile extends Component {
-  state = {
-    profile: null,
-    error: ""
-  };
+const Profile = props => {
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState("");
 
-  componentDidMount() {
-    this.loadUserProfile();
-  }
-
-  loadUserProfile = () => {
-    this.props.auth.getProfile((error, profile) => {
-      console.log("Profile", profile, error);
-      this.setState({
-        profile,
-        error
-      });
+  useEffect(() => {
+    props.auth.getProfile((error, profile) => {
+      setProfile(profile);
+      setError(error);
     });
-  };
+  }, [props.auth]);
 
-  render() {
-    const { profile } = this.state;
-    if (!profile) return null;
-    return (
-      <>
-        <h1>Profile</h1>
-        <p>{profile.nickname}</p>
-        <img
-          style={{ maxWidth: 50, maxHeight: 50 }}
-          src={profile.picture}
-          alt="Profile Pic"
-        />
-        <pre>{JSON.stringify(profile, null, 2)}</pre>
-      </>
-    );
-  }
-}
+  if (!profile) return null;
+
+  return (
+    <>
+      {error ? <h1>Error: {error}</h1> : null}
+      <h1>Profile</h1>
+      <p>{profile.nickname}</p>
+      <img
+        style={{ maxWidth: 50, maxHeight: 50 }}
+        src={profile.picture}
+        alt="Profile Pic"
+      />
+      <pre>{JSON.stringify(profile, null, 2)}</pre>
+    </>
+  );
+};
 
 export default Profile;

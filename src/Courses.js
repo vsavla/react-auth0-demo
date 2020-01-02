@@ -1,33 +1,31 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 
-class Courses extends Component {
-  state = {
-    courses: [],
-    error: ""
-  };
+const Courses = props => {
+  const [courses, setCourses] = useState([]);
+  const [error, setError] = useState("");
 
-  componentDidMount() {
+  useEffect(() => {
     fetch("/courses", {
-      headers: { Authorization: `Bearer ${this.props.auth.getAccessToken()}` }
+      headers: { Authorization: `Bearer ${props.auth.getAccessToken()}` }
     })
       .then(response => {
         if (response.ok) return response.json();
         throw new Error("Response Status: " + response.status);
       })
-      .then(response => this.setState({ courses: response.courses }))
-      .catch(error => this.setState({ error: "Response was not OK" }));
-  }
+      .then(response => setCourses(response.courses))
+      .catch(_ => setError("Response was not OK"));
+  }, [props.auth]);
 
-  render() {
-    console.log(this.state.courses);
-    return (
+  return (
+    <>
+      {error ? <h1>Error: {error}</h1> : null}
       <ul>
-        {this.state.courses.map(course => (
+        {courses.map(course => (
           <li key={course.id}>{course.title}</li>
         ))}
       </ul>
-    );
-  }
-}
+    </>
+  );
+};
 
 export default Courses;

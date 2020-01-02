@@ -1,17 +1,15 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 
-class Callback extends Component {
-  componentDidMount() {
-    if (/access_token|id_token|error/.test(this.props.location.hash)) {
-      this.props.auth.handleAuthentication();
+const Callback = props => {
+  useEffect(() => {
+    if (/access_token|id_token|error/.test(props.location.hash)) {
+      props.auth.handleAuthentication();
     } else {
       throw new Error("Invalid redirect URL");
     }
-  }
+  }, [props.auth, props.location.hash]);
 
-  render() {
-    return <h1>Loading...</h1>;
-  }
-}
+  return <h1>Loading...</h1>;
+};
 
 export default Callback;
